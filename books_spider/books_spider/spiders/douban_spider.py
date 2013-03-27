@@ -61,6 +61,7 @@ class douban_spider(CrawlSpider):
         except:
             pass
 
+
         try:
             item['score'] = soup.find('strong', property="v:average").get_text().strip()
             item['votes_num'] = soup.find('span', property="v:votes").get_text().strip()
