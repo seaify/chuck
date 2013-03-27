@@ -61,9 +61,18 @@ class douban_spider(CrawlSpider):
         except:
             pass
 
-        item['score'] = soup.find('strong', property="v:average").get_text().strip()
-        item['votes_num'] = soup.find('span', property="v:votes").get_text().strip()
+        try:
+            item['score'] = soup.find('strong', property="v:average").get_text().strip()
+            item['votes_num'] = soup.find('span', property="v:votes").get_text().strip()
+        except:
+            pass
         
+        sections = list(soup.find('div', id="db-tags-section").find('div', class_="indent").stripped_strings)
+        print(sections)
+        if len(sections):
+            item['tags'] = {}
+            for i in range(0, len(sections), 2):
+                item['tags'][sections[i]] = re.search('\((\d+)\)', sections[i + 1]).group(1)
         return item
 
 
