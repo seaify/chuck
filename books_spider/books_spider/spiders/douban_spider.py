@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
 from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 from scrapy import log
+from bs4 import BeautifulSoup
 import re
 import os
+import json
 
 
 class douban_spider(CrawlSpider):
@@ -24,7 +27,52 @@ class douban_spider(CrawlSpider):
             return m.group(1)
         return None
 
+    def generate_item(self, response):
+        
+        item = {}
+        item['ref_ids'] = response.url
+
+        soup = BeautifulSoup(response.body)
+        item['name'] = soup.find('title').get_text().replace(u' (豆瓣)', '')
+
+        info = list(soup.find('div', id="info").stripped_strings)
+
+        last_text = ''
+        for text in info:
+            print last_text
+            if last_text == u"原作名:":
+                item['original_title'] = text
+            elif last_text == u'出版社:':
+                item['press'] = text
+            elif last_text == u'页数:':
+                item['page_nums'] = text
+            elif last_text == u'定价:':
+                item['price'] = text
+            elif last_text == u'出版年:':
+                item['publication'] = text
+            elif last_text == u'ISBN:':
+                item['isbn'] = text
+            last_text = text
+
+        
+        try:
+            item['authors'] = [x.get_text() for x in soup.find('span', class_='pl', text=re.compile(u'作者')).parent.find_all('a')]
+            item['translator'] = [x.get_text() for x in soup.find('span', class_='pl', text=re.compile(u'译者: ')).parent.find_all('a')]
+        except:
+            pass
+
+        item['score'] = soup.find('strong', property="v:average").get_text().strip()
+        item['votes_num'] = soup.find('span', property="v:votes").get_text().strip()
+        
+        return item
+
+
     def parse_page(self, response):
         url_id = self.get_url_id(response)
-        if url_id:
-            open(os.path.join('douban/', url_id), 'w').write(response.body)
+        if not url_id:
+            return 
+        open(os.path.join('douban/', url_id), 'w').write(response.body)
+
+        item = self.generate_item(response)
+        print(item)
+        open('info.txt', 'a').write('%s\n' % json.dumps(item, ensure_ascii=False).encode('utf8'))
