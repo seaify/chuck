@@ -6,7 +6,8 @@
 #     http://doc.scrapy.org/topics/settings.html
 #
 
-BOT_NAME = 'books_spider'
+BOT_NAME = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.172 Safari/537.22'
+
 
 SPIDER_MODULES = ['books_spider.spiders']
 NEWSPIDER_MODULE = 'books_spider.spiders'

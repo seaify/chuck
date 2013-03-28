@@ -15,11 +15,18 @@ class douban_spider(CrawlSpider):
 
     allow_domain = "book.douban.com"
 
+    proxy_list = []
+
     rules = (
         Rule(SgmlLinkExtractor(allow=("/tag"))),
         Rule(SgmlLinkExtractor(allow=("subject/\d+/$")),
             callback='parse_page'),
         )
+
+    def __init__(self):
+        
+        CrawlSpider.__init__(self)
+        self.proxy_list = [x.strip() for x in open('books_spider/proxy.list').readlines()]
 
     def get_url_id(self, response):
         m = re.search("subject/(\d+)/$", response.url)
