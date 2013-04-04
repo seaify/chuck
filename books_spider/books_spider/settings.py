@@ -15,8 +15,9 @@ NEWSPIDER_MODULE = 'books_spider.spiders'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'books_spider (+http://www.yourdomain.com)'
 
-AUTOTHROTTLE_ENABLED = True
-AUTOTHROTTLE_DEBUG = True
+#AUTOTHROTTLE_ENABLED = True
+#AUTOTHROTTLE_DEBUG = True
+RETRY_TIMES = 0
 
 DOWNLOADER_MIDDLEWARES = {
     'books_spider.middlewares.InitRequest': 50,

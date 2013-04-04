@@ -12,21 +12,14 @@ class douban_spider(CrawlSpider):
 
     name = "douban"
     start_urls = ["http://book.douban.com/tag/"]
-
     allow_domain = "book.douban.com"
 
-    proxy_list = []
 
     rules = (
         Rule(SgmlLinkExtractor(allow=("/tag"))),
         Rule(SgmlLinkExtractor(allow=("subject/\d+/$")),
             callback='parse_page'),
         )
-
-    def __init__(self):
-        
-        CrawlSpider.__init__(self)
-        self.proxy_list = [x.strip() for x in open('books_spider/proxy.list').readlines()]
 
     def get_url_id(self, response):
         m = re.search("subject/(\d+)/$", response.url)
@@ -46,7 +39,6 @@ class douban_spider(CrawlSpider):
 
         last_text = ''
         for text in info:
-            print last_text
             if last_text == u"原作名:":
                 item['original_title'] = text
             elif last_text == u'出版社:':
@@ -91,5 +83,4 @@ class douban_spider(CrawlSpider):
         open(os.path.join('douban/', url_id), 'w').write(response.body)
 
         item = self.generate_item(response)
-        print(item)
         open('info.txt', 'a').write('%s\n' % json.dumps(item, ensure_ascii=False).encode('utf8'))
