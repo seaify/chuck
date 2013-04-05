@@ -16,10 +16,14 @@ class douban_spider(CrawlSpider):
 
 
     rules = (
-        Rule(SgmlLinkExtractor(allow=("/tag"))),
+        Rule(SgmlLinkExtractor(allow=("/tag")), process_request="not_write_file"),
         Rule(SgmlLinkExtractor(allow=("subject/\d+/$")),
             callback='parse_page'),
         )
+
+    def not_write_file(self, request):
+        request.meta['not_write_file'] = True
+        return request
 
     def get_url_id(self, response):
         m = re.search("subject/(\d+)/$", response.url)

@@ -17,6 +17,8 @@ NEWSPIDER_MODULE = 'books_spider.spiders'
 
 #AUTOTHROTTLE_ENABLED = True
 #AUTOTHROTTLE_DEBUG = True
+
+DUPEFILTER_CLASS = 'books_spider.dupefilter.BooksDupeFilter'
 COOKIES_ENABLED = False
 RETRY_TIMES = 0
 
